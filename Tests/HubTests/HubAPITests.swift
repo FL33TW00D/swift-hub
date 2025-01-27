@@ -147,6 +147,7 @@ class HubAPITests: XCTestCase {
 }
 
 class SnapshotDownloadTests: XCTestCase {
+    var isVerbose: Bool = false
     let repo = "coreml-projects/Llama-2-7b-chat-coreml"
     let downloadDestination: URL = {
         let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -159,7 +160,7 @@ class SnapshotDownloadTests: XCTestCase {
         do {
             try FileManager.default.removeItem(at: downloadDestination)
         } catch {
-            print("Can't remove test download destination \(downloadDestination), error: \(error)")
+            print("Can't remove test download destination \(self.downloadDestination), error: \(error)")
         }
     }
 
@@ -185,9 +186,11 @@ class SnapshotDownloadTests: XCTestCase {
     func testDownload() async throws {
         let hubApi = HubAPI(downloadBase: downloadDestination)
         var lastProgress: Progress? = nil
-        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "*.json") { progress in
-            print("Total Progress: \(progress.fractionCompleted)")
-            print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "*.json") { [self] progress in
+            if isVerbose {
+                print("Total Progress: \(progress.fractionCompleted)")
+                print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+            }
             lastProgress = progress
         }
         XCTAssertEqual(lastProgress?.fractionCompleted, 1)
@@ -211,9 +214,11 @@ class SnapshotDownloadTests: XCTestCase {
     func testDownloadInBackground() async throws {
         let hubApi = HubAPI(downloadBase: downloadDestination, useBackgroundSession: true)
         var lastProgress: Progress? = nil
-        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "llama-2-7b-chat.mlpackage/Data/com.apple.CoreML/Metadata.json") { progress in
-            print("Total Progress: \(progress.fractionCompleted)")
-            print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "llama-2-7b-chat.mlpackage/Data/com.apple.CoreML/Metadata.json") { [self] progress in
+            if isVerbose {
+                print("Total Progress: \(progress.fractionCompleted)")
+                print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+            }
             lastProgress = progress
         }
         XCTAssertEqual(lastProgress?.fractionCompleted, 1)
@@ -232,9 +237,11 @@ class SnapshotDownloadTests: XCTestCase {
     func testCustomEndpointDownload() async throws {
         let hubApi = HubAPI(downloadBase: downloadDestination, endpoint: "https://hf-mirror.com")
         var lastProgress: Progress? = nil
-        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "*.json") { progress in
-            print("Total Progress: \(progress.fractionCompleted)")
-            print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+        let downloadedTo = try await hubApi.snapshot(from: repo, matching: "*.json") { [self] progress in
+            if isVerbose {
+                print("Total Progress: \(progress.fractionCompleted)")
+                print("Files Completed: \(progress.completedUnitCount) of \(progress.totalUnitCount)")
+            }
             lastProgress = progress
         }
         XCTAssertEqual(lastProgress?.fractionCompleted, 1)
