@@ -32,7 +32,7 @@ class Downloader: NSObject, ObservableObject {
     init(from url: URL, to destination: URL, using authToken: String? = nil, inBackground: Bool = false) {
         self.destination = destination
         super.init()
-        let sessionIdentifier = "swift-transformers.hub.downloader"
+        let sessionIdentifier = "swift-hub.downloader"
 
         var config = URLSessionConfiguration.default
         if inBackground {
