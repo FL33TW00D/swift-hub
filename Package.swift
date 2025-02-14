@@ -7,7 +7,8 @@ let package = Package(
   name: "swift-hub",
   platforms: [.iOS(.v16), .macOS(.v13)],
   products: [
-    .executable(name: "hub-cli", targets: ["HubCLI"])
+    .executable(name: "hub-cli", targets: ["HubCLI"]),
+    .library(name: "Hub", targets: ["Hub"]),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0")
